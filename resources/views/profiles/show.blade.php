@@ -7,7 +7,7 @@
                 <div class="page-header">
                     <h1>
                         {{ $profileUser->name }}
-                        <small>Desde {{ $profileUser->created_at->diffForHumans() }}</small>
+                        <small>Entrou {{ $profileUser->created_at->diffForHumans() }}</small>
                     </h1>
                 </div>
 

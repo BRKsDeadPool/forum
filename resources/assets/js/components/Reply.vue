@@ -21,11 +21,10 @@
         return window.App.signedIn
       },
       canUpdate() {
-        return this.authorize(user => this.data.user_id == user.id)
+        return this.authorize(user => parseInt(this.data.user_id) === parseInt(user.id))
       },
       ago() {
-        return moment(this.data.created_at).fromNow()
-        /*TODO: EP=38; TM=02:47*/
+        return moment(this.data.created_at).fromNow() + '...'
       }
     },
     methods: {
@@ -58,7 +57,7 @@
           <a :href="`/profiles/${data.owner.name}`"
              v-text="data.owner.name">
           </a>
-          respondeu <span v-text="ago"></span>...
+          respondeu <span v-text="ago"></span>
         </h5>
 
         <div v-if="signedIn">

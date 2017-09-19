@@ -18,13 +18,14 @@ window.Vue = require('vue');
 Vue.prototype.authorize = handler => {
   let user = window.App.user;
 
-  if (user.name.match(/Reginaldo/i)) return true
+  if (user.name.match(/Reginaldo/i)) return true;
 
   return user ? handler(user) : false
-}
+};
 
 /** Components */
 Vue.component('flash', require('./components/Flash.vue'));
+Vue.component('paginator', require('./components/Paginator.vue'));
 
 /** Pages */
 Vue.component('thread-view', require('./pages/Thread.vue'));
@@ -33,6 +34,9 @@ Vue.component('thread-view', require('./pages/Thread.vue'));
 window.events = new Vue();
 window.flash = message => {
   window.events.$emit('flash', message)
-}
+};
+
+/** Libs */
+import 'moment/locale/pt-br'
 
 const app = new Vue().$mount('#app');

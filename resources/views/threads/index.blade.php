@@ -14,7 +14,7 @@
                                 </h4>
 
                                 <a href="{{ $thread->path() }}">
-                                    <strong>{{ $thread->replies_count }} {{ str_plural('comment', $thread->replies_count) }}</strong>
+                                    <strong>{{ $thread->replies_count }} {{ str_plural('comentário', $thread->replies_count) }}</strong>
                                 </a>
                             </div>
                         </div>
@@ -24,7 +24,7 @@
                         </div>
                     </div>
                 @empty
-                    <p>There are no relevant results at this time. </p>
+                    <p>Não há resultados relevantes no momento. </p>
                 @endforelse
             </div>
         </div>

@@ -11,7 +11,14 @@ class RepliesController extends Controller
 {
     function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', [
+            'except' => 'index'
+        ]);
+    }
+
+    public function index($channelId, Thread $thread)
+    {
+        return response($thread->replies()->paginate(1));
     }
 
     public function store($channel, Thread $thread)

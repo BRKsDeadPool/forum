@@ -16,7 +16,7 @@
                                     <form action="{{ $thread->path() }}" method="post">
                                         {{ csrf_field() }}
                                         {{ method_field('delete') }}
-                                        <button type="submit" class="btn btn-link">Delete Thread</button>
+                                        <button type="submit" class="btn btn-link">Deletar Discussão</button>
                                     </form>
                                 @endcan
                             </div>
@@ -27,21 +27,16 @@
                         </div>
                     </div>
 
-                    <replies :data="{{ $thread->replies }}" @remove="repliesCount--" @add="repliesCount++"></replies>
-                    {{--@foreach($replies as $reply)--}}
-                    {{--@include('threads.reply')--}}
-                    {{--@endforeach--}}
-
-                    {{--{{ $replies->links() }}--}}
+                    <replies @remove="repliesCount--" @add="repliesCount++"></replies>
                 </div>
                 <div class="col-md-4">
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <p>
-                                This thread was published {{ $thread->created_at->diffForHumans() }} by
-                                <a href="#">{{ $thread->creator->name }}</a>, and currently
-                                has <span v-text="repliesCount"></span>
-                                {{ str_plural('comment', $thread->replies_count) }}.
+                                Essa discussão foi publicada {{ $thread->created_at->diffForHumans() }} por
+                                <a href="#">{{ $thread->creator->name }}</a>, e atualmente
+                                tem <span v-text="repliesCount"></span>
+                                {{ str_plural('comentário', $thread->replies_count) }}.
                             </p>
                         </div>
                     </div>
