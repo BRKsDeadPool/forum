@@ -9,6 +9,10 @@
         this.page = this.dataSet.current_page
         this.prevUrl = this.dataSet.prev_page_url
         this.nextUrl = this.dataSet.next_page_url
+      },
+      page() {
+        this.broadcast()
+          .updateUrl()
       }
     },
     data() {
@@ -20,7 +24,17 @@
     },
     computed: {
       shouldPaginate() {
-        return this.prevUrl || this.nextUrl
+        return !!this.prevUrl || !!this.nextUrl
+      }
+    },
+    methods: {
+      broadcast() {
+        return this.$emit('changed', this.page)
+      },
+      updateUrl() {
+        history.pushState(null, null, `?page=${this.page}`)
+
+        return this
       }
     }
   }
@@ -29,15 +43,13 @@
 <template>
   <ul class="pagination" v-if="shouldPaginate">
     <li v-show="prevUrl">
-      <a href="#" aria-label="Previous" rel="prev">
+      <a href="#" aria-label="Previous" rel="prev" @click.prevent="page--">
         <span aria-hidden="true">&laquo; Anterior</span>
       </a>
     </li>
 
-    <!-- TODO: EP=38; TM=17:27 -->
-
     <li v-show="nextUrl">
-      <a href="#" aria-label="Previous" rel=next">
+      <a href="#" aria-label="Previous" rel="next" @click.prevent="page++">
         <span aria-hidden="true">Próximo &raquo;</span>
       </a>
     </li>

@@ -3,12 +3,22 @@
 namespace App;
 
 use app\Filters\Filters;
+use App\Notifications\ThreadWasUpdated;
 use App\Traits\RecordsActivity;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property mixed replies
+ * @property mixed channel
+ * @property mixed $creator
+ * @property mixed id
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property mixed $subscriptions
+ */
 class Thread extends Model
 {
     use RecordsActivity;
@@ -25,6 +35,8 @@ class Thread extends Model
      */
     protected $with = ['creator', 'channel'];
 
+    protected $appends = ['isSubscribedTo'];
+
     /**
      *  Boot the thread model, setup global scopes and add model listeners
      * @return void
@@ -33,10 +45,6 @@ class Thread extends Model
     {
         parent::boot();
 
-        static::addGlobalScope('replyCount', function (Builder $builder) {
-            $builder->withCount('replies');
-        });
-
         static::deleting(function (Thread $thread) {
             $thread->replies->each->delete();
         });
@@ -44,11 +52,12 @@ class Thread extends Model
 
     /**
      *  Returns the thread instance path, useful for creating links
+     * @param string $path
      * @return string
      */
-    public function path(): string
+    public function path($path = ''): string
     {
-        return "/threads/{$this->channel->slug}/{$this->id}";
+        return "/threads/{$this->channel->slug}/{$this->id}{$path}";
     }
 
     /**
@@ -76,7 +85,14 @@ class Thread extends Model
      */
     public function addReply(array $reply): Model
     {
-        return $this->replies()->create($reply);
+        $reply = $this->replies()->create($reply);
+
+        $this->subscriptions
+            ->where('user_id', '!=', $reply->user_id)
+            ->each
+            ->notify($reply);
+
+        return $reply;
     }
 
     /**
@@ -97,5 +113,44 @@ class Thread extends Model
     public function scopeFilter(Builder $query, Filters $filters): Builder
     {
         return $filters->apply($query);
+    }
+
+    /**
+     * @param null $userId
+     * @return $this
+     */
+    public function subscribe($userId = null)
+    {
+        $this->subscriptions()
+            ->create([
+                'user_id' => $userId ?: auth()->id()
+            ]);
+
+        return $this;
+    }
+
+    /**
+     * @param null $userId
+     */
+    public function unsubscribe($userId = null)
+    {
+        $this->subscriptions()
+            ->where('user_id', $userId ?: auth()->id())
+            ->delete();
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function subscriptions()
+    {
+        return $this->hasMany(ThreadSubscription::class);
+    }
+
+    public function getIsSubscribedToAttribute()
+    {
+        return $this->subscriptions()
+            ->where('user_id', auth()->id())
+            ->exists();
     }
 }

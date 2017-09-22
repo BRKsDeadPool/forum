@@ -6,6 +6,13 @@ use App\Traits\RecordsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property mixed thread
+ * @property mixed $owner
+ * @property mixed id
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ */
 class Reply extends Model
 {
     use Favoriteable, RecordsActivity;
@@ -26,6 +33,19 @@ class Reply extends Model
      *  Append some global attributes to json cast
      */
     protected $appends = ['favoritesCount', 'isFavorited'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function($reply) {
+           $reply->thread->increment('replies_count');
+        });
+
+        static::deleted(function($reply) {
+            $reply->thread->decrement('replies_count');
+        });
+    }
 
     /**
      *  Define owner relationship

@@ -21,22 +21,24 @@
     },
     name: 'Replies',
     methods: {
-      fetch() {
-        axios.get(this.url())
+      fetch(page) {
+        axios.get(this.url(page))
           .then(this.refresh)
       },
       refresh({data}) {
         this.dataSet = data
         this.items = data.data
+
+        window.scrollTo(0, 0)
       },
-      url() {
-        return `${window.location.pathname}/replies`
+      url(page) {
+        if (!page) {
+          let query = location.search.match(/page=(\d+)/)
+
+          page = query ? query[1] : 1
+        }
+        return `${window.location.pathname}/replies?page=${page}`
       },
-    },
-    computed: {
-      endpoint() {
-        return `${window.location.pathname}/replies`
-      }
     }
   }
 </script>
@@ -47,8 +49,8 @@
       <reply :data="reply" @deleted="remove(i)"></reply>
     </div>
 
-    <paginator :data-set="dataSet"></paginator>
+    <paginator :data-set="dataSet" @changed="fetch"></paginator>
 
-    <new-reply @created="add" :endpoint="endpoint"></new-reply>
+    <new-reply @created="add"></new-reply>
   </div>
 </template>

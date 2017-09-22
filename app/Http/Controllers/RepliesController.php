@@ -18,13 +18,13 @@ class RepliesController extends Controller
 
     public function index($channelId, Thread $thread)
     {
-        return response($thread->replies()->paginate(1));
+        return response($thread->replies()->paginate(20));
     }
 
     public function store($channel, Thread $thread)
     {
         $this->validate(request(), [
-           'body' => 'required'
+            'body' => 'required'
         ]);
         $reply = $thread->addReply([
             'body' => request('body'),

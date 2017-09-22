@@ -4,11 +4,11 @@
     computed: {
       signedIn() {
         return window.App.signedIn
+      },
+      endpoint() {
+        return `${window.location.pathname}/replies`
       }
     },
-    props: [
-      'endpoint'
-    ],
     data() {
       return {
         body: '',
@@ -23,6 +23,7 @@
             vm.body = ''
             vm.$emit('created', data)
             flash('Your Reply Has Been Posted!')
+            vm.$refs.textarea.focus()
           })
       }
     }
@@ -39,7 +40,8 @@
                               class="form-control"
                               placeholder="Have something to say ?"
                               required
-                              v-model="body"></textarea>
+                              v-model="body"
+                              ref="textarea"></textarea>
       </div>
       <button type="submit" class="btn btn-default">Post</button>
     </form>

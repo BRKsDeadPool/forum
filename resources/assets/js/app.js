@@ -16,6 +16,8 @@ window.Vue = require('vue');
 
 /** Mixins */
 Vue.prototype.authorize = handler => {
+  if (!window.App.signedIn) return false
+
   let user = window.App.user;
 
   if (user.name.match(/Reginaldo/i)) return true;
@@ -26,6 +28,7 @@ Vue.prototype.authorize = handler => {
 /** Components */
 Vue.component('flash', require('./components/Flash.vue'));
 Vue.component('paginator', require('./components/Paginator.vue'));
+Vue.component('user-notifications', require('./components/UserNotifications.vue'))
 
 /** Pages */
 Vue.component('thread-view', require('./pages/Thread.vue'));

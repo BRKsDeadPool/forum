@@ -32,6 +32,7 @@
                             <li><a href="/threads?by={{ auth()->user()->name }}">Minhas Discussões</a></li>
                         @endif
                         <li><a href="/threads?popular=1">Discussões Populares</a></li>
+                        <li><a href="/threads?unanswered=1">Discussões Sem Respotas</a></li>
                     </ul>
                 </li>
                 <li>
@@ -58,6 +59,7 @@
                     <li><a href="{{ route('login') }}">Login</a></li>
                     <li><a href="{{ route('register') }}">Register</a></li>
                 @else
+                    <user-notifications></user-notifications>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                            aria-expanded="false">

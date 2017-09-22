@@ -1,4 +1,5 @@
 let mix = require('laravel-mix');
+let qrcode = require('qrcode');
 
 /*
  |--------------------------------------------------------------------------
@@ -12,4 +13,20 @@ let mix = require('laravel-mix');
  */
 
 mix.js('resources/assets/js/app.js', 'public/js')
-   .sass('resources/assets/sass/app.scss', 'public/css');
+  .sass('resources/assets/sass/app.scss', 'public/css')
+  .disableNotifications()
+  .sourceMaps()
+  .then(() => {
+    require('dns').lookup(require('os').hostname(), function (err, add, fam) {
+      qrcode.toString(`http://${add}`, {
+        scale: 10,
+        type: 'terminal'
+      }, (err, url) => {
+        if (err) throw err
+
+        process.stdout.write(url)
+        process.stdout.write('\n')
+      })
+    })
+  });
+;
